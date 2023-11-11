@@ -6,31 +6,27 @@ import (
 	"os"
 )
 
-var config *Config
-
-type Config struct {
-	Server struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
-	} `yaml:"server"`
-	Database struct {
-		DSN string `yaml:"dsn"`
-	} `yaml:"database"`
-}
-
 func initConfig(configPath string) error {
-	log.Printf("Reading the configuration from the %s\n", configPath)
+	log.Printf("Reading the configuration\n%s\n", configPath)
 	yamlData, err := os.ReadFile(configPath)
 	if err != nil {
 		return err
 	}
-	log.Printf("Got yaml data from the config file \n%s\n", yamlData)
-
-	config = &Config{}
-	err = yaml.Unmarshal(yamlData, &config)
+	log.Printf("Got yaml data\n%s\n", yamlData)
+	onceCfg.Do(func() {
+		config, err = newConfig(&yamlData)
+	})
 	if err != nil {
 		return err
 	}
-
 	return nil
+}
+
+func newConfig(yamlData *[]byte) (*Config, error) {
+	var c *Config
+	err := yaml.Unmarshal(*yamlData, &c)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }

@@ -1,6 +1,6 @@
 # Define variables
 BINARY_NAME=bin/forum-auth
-SRC_FILES=cmd/main.go cmd/config.go
+SRC_FILES=cmd/main.go cmd/config.go cmd/app.go
 
 # Define targets
 all: build
